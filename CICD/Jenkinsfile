@@ -1,0 +1,83 @@
+pipeline {
+    agent any
+    
+    environment {
+        AWS_REGION = 'your-region' // specify your AWS region        
+        ECR_REPOSITORY = 'your-ecr-repo' // specify your ECR repository        
+        ECS_CLUSTER = 'your-ecs-cluster' // specify your ECS cluster        
+        ECS_SERVICE = 'your-ecs-service' // specify your ECS service    
+    }
+    stages {
+        stage('Git Sync') {
+            steps {
+                echo "Git sync"
+            }
+        }
+        stage('Install AWS CLI') {
+            steps {
+                echo "Instal AWS CLI"
+            }
+        }
+        stage('Store AWS credentials in AWS Secrets Manager') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'aws-credentials', usernameVariable: 'AWS_ACCESS_KEY_ID', passwordVariable: 'AWS_SECRET_ACCESS_KEY')]) {
+                    sh '''
+                        echo "Store AWS Credentials in Secret Manager"
+                    '''
+                }
+            }
+        }
+        stage('Install Terraform (only if base image does not have)') {
+            steps {
+                echo 'Install Terraform (only if base image does not have)'
+            }
+        }
+        
+        stage('Run Terraform code to create Infrastructre') {
+            steps {
+                echo 'Run Terraform code to create Infrastructre'
+            }
+        }
+        
+        stage('Run application') {
+            steps {
+                echo 'Run application'
+            }
+        }
+        
+        stage('Run E2E test') {
+            steps {
+                echo 'Run E2E test'
+            }
+        }
+        
+        stage('Build Docker image') {
+            steps {
+                echo 'sh \'docker build -t $ECR_REPOSITORY:latest .\''
+            }
+        }
+        
+        stage('Push Docker image to ECR') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'aws-credentials', usernameVariable: 'AWS_ACCESS_KEY_ID', passwordVariable: 'AWS_SECRET_ACCESS_KEY')]) {
+                    echo 'push docker image to ECR'
+                }
+            }
+        }
+        
+        stage('Deploy to ECS') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'aws-credentials', usernameVariable: 'AWS_ACCESS_KEY_ID', passwordVariable: 'AWS_SECRET_ACCESS_KEY')]) {
+                    echo 'Deploy to ECS'
+                }
+            }
+        }
+    }
+    post {
+        always {
+            echo 'Cleanup step'
+            // Add your cleanup commands here. For example:           
+            // sh 'docker system prune -f'        
+        }
+    }
+}
