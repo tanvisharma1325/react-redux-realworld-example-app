@@ -2,8 +2,6 @@ resource "aws_route53_zone" "my_zone" {
   name = "<your_domain_name>"
 }
 
-
-
 resource "aws_route53_record" "my_record" {
   name    = "<your_subdomain>"
   type    = "A"
