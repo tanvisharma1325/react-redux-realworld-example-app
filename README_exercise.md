@@ -34,7 +34,7 @@ Follow the instructions below to run the application:
 1. **Ensure Docker is installed on your machine.**
 2. **Navigate to the project directory by using the `cd <project-folder>\Infrastructure` command.**
 3. **Build the Docker image with the command:** `docker build -t <terraform-image-name> .`
-4. **As I don't have AWS Credentials, validation of the Terraform scripts can be done by running the 'validate' command:** `docker run -p <image-name> validate`
+4. **As I don't have AWS Credentials, validation of the Terraform scripts can be done by running the 'validate' command:** `docker run <image-name> validate`
 5. **The above steps will result in a success or an error message, indicating the validity of the Terraform scripts.**
 
 # **Task 3: CICD with Jenkins**
